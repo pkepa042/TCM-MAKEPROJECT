@@ -251,6 +251,9 @@ def maingame():
     FPS = 50
     lives = 5
     score = 0
+    frame_rate = 60
+    frame_count = 0
+    start_time = 90
     main_font = pygame.font.SysFont("comicsans", 50)
     lost_font = pygame.font.SysFont("comicsans", 80)
     timer_font = pygame.font.SysFont("comicsans", 50)
@@ -292,12 +295,18 @@ def maingame():
             enemy.move()
         for leftenemy in enemiesleft:
             leftenemy.moveleft()
-
-        timertext = timer_font.render("Time Left: " + str((90000 - pygame.time.get_ticks()) / 60000) + ":" + str(
-            (90000 - pygame.time.get_ticks()) / 1000 % 60).zfill(2), True, BLACK)
-        textRect = timertext.get_rect()
-        textRect.topleft = [20, 50]
-        screen.blit(timertext, textRect)
+        
+        total_seconds = start_time - (frame_count // frame_rate)
+        if total_seconds < 0:
+            total_seconds = 0
+        minutes = total_seconds // 60
+        seconds = total_seconds % 60
+        output_string = "Time left: {0:02}:{1:02}".format(minutes, seconds)
+        text = timer_font.render(output_string, True, BLACK)
+        screen.blit(text, [20, 50])
+        frame_count += 1
+        clock.tick(frame_rate)
+        pygame.display.flip()
 
         pygame.display.update()
 
